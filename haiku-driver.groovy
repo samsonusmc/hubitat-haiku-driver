@@ -18,6 +18,8 @@ metadata {
         command "sleepOff"
         command "fanAutoOn"
         command "fanAutoOff"
+        command "lightAutoOn"
+        command "lightAutoOff"
         command "refreshFanSpeed"
         command "setFanLevel",["number"]
 
@@ -26,6 +28,7 @@ metadata {
         attribute "whoosh", "string"
         attribute "sleep", "string"
         attribute "fanAuto", "string"
+        attribute "lightAuto", "string"
         attribute "fanLevel", "number"
         attribute "lightPresent", "string"
         attribute "SNSROCCcurr", "string"
@@ -110,6 +113,8 @@ def parse(String description) {
                     int level = (int)Math.ceil(values[4].toInteger() * HAIKU_LIGHT_SPREAD)
                     events << sendEvent(name: "level", value: level)
                     return events;
+				case "AUTO":
+                    return createEvent(name: "lightAuto", value: values[3].toLowerCase())
             }
             break
         case "FAN":
@@ -207,6 +212,14 @@ def fanAutoOff() {
     sendFanAutoCommand("OFF")
 }
 
+def lightAutoOn() {
+    sendLightAutoCommand("ON")
+}
+
+def lightAutoOff() {
+    sendLightAutoCommand("OFF")    
+}
+
 def sleepOn() {
     sendFanSleepCommand("ON")
 }
@@ -217,6 +230,10 @@ def sleepOff() {
 
 def sendLightPowerCommand(String command) {
     sendCommand("LIGHT", "PWR", command)
+}
+
+def sendLightAutoCommand(String command) {
+    sendCommand("LIGHT", "AUTO", command)
 }
 
 def sendFanWhooshCommand(String command) {
